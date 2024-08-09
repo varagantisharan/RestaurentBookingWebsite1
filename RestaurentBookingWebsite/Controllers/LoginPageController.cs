@@ -128,7 +128,7 @@ namespace RestaurentBookingWebsite.Controllers
                                     if (respResult.IsSuccessStatusCode)
                                     {
                                         ViewBag.Message = "SignUp Successfully Submited";
-                                        return RedirectToAction("Signup");
+                                        return RedirectToAction("SigninUser");
                                     }
                                     else
                                     {
