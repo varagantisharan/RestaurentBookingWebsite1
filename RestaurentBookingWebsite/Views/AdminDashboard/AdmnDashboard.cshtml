@@ -1,0 +1,426 @@
+﻿@model List<RestaurentBookingWebsite.DbModels.Booking>
+
+@{
+    ViewData["Title"] = "AdmnDashboard";
+}
+
+<head>
+    <!-- Include Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Your existing CSS here -->
+</head>
+
+<style >
+
+   /*  .container(background: url("https://png.pngtree.com/background/20210710/original/pngtree-gourmet-japanese-restaurant-sushi-creative-simple-business-poster-design-picture-image_1016307.jpg");
+    background-size: cover; 
+    height:100%;
+ */
+
+    /* Add a background image to the body */
+
+    table {
+        width: 100%;
+        max-width: 1200px; /* Adjusted for wider screens */
+        margin: 30px auto;
+    }
+
+    /* Ensure tables are responsive and scrollable */
+    .table-container {
+        overflow-x: auto; /* For horizontal scrolling on small screens */
+    }
+
+    /* Style for headers */
+    th {
+        background: linear-gradient(#777, #444);
+        border-left: 1px solid #555;
+        border-right: 1px solid #777;
+        border-top: 1px solid #555;
+        border-bottom: 1px solid #333;
+        box-shadow: inset 0 1px 0 #999;
+        color: #fff;
+        font-weight: bold;
+        padding: 10px 15px;
+        text-shadow: 0 1px 0 #000;
+    }
+
+    /* Style for table rows */
+    tr {
+        background: #fafafa;
+    }
+
+        tr:nth-child(odd) td {
+            background: #f1f1f1;
+        }
+
+    /* Style for form elements */
+    form {
+        margin: 20px 0;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    input[type="date"] {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 6px;
+    }
+
+    input[type="submit"] {
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+        padding: 10px 15px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+    /* Style for headings */
+    h3 {
+        margin-top: 20px;
+        font-size: 1.5rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin: 30px 0;
+    }
+
+    .center-text {
+        text-align: center;
+    }
+    
+
+
+
+    /* Ensures all form elements align properly */
+    .row {
+        display: flex;
+        align-items: center; /* Aligns items vertically */
+        flex-wrap: wrap; /* Allows items to wrap if necessary */
+        margin-bottom: 10px;
+    }
+
+    /* Adjusts the download link appearance */
+    .export-link {
+        display: inline-flex; /* Aligns the icon and text horizontally */
+        align-items: center; /* Vertically centers the icon and text */
+        text-decoration: none; /* Removes underline from the link */
+        color: #007bff; /* Link color */
+        font-size: 16px; /* Adjusts font size */
+        margin-top: 0; /* Ensures no extra space above the link */
+    }
+
+    .export-link i {
+        margin-left: 8px; /* Space between the icon and text */
+        font-size: 15px; /* Icon size */
+    }
+
+    .export-link:hover {
+        color: #0056b3; /* Changes color on hover */
+        text-decoration: underline; /* Adds underline on hover */
+    }
+
+    .col-sm-2, .col-sm-4 {
+        margin-bottom: 10px;
+    }
+
+    .top-right {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 10px;
+       /*  background-color: #f8f9fa; */
+        border-bottom-left-radius: 5px;
+    }
+
+</style>
+
+
+<div class="top-right">
+ <h3> @TempData["UserName"]</h3>
+</div>
+
+    <h5 class="center-text">LAST SEVEN DAYS REGISTRATION</h5>
+    <table class="table">
+        <thead>
+            
+            <tr>
+                <th>
+                    Customer Id
+                </th>
+                <th>
+                    First Name
+                </th>
+                <th>
+                    Last Name
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>
+                    Phone Number
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    User Id
+                </th>
+                <th>
+                    Date Of Registration
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (ViewBag.Customers != null)
+        {
+            @foreach (var item in ViewBag.Customers)
+            {
+                <tr>
+                    <td>
+                        @item.CustomerId
+                    </td>
+                    <td>
+                        @item.FirstName
+                    </td>
+                    <td>
+                        @item.LastName
+                    </td>
+                    <td>
+                        @item.Address
+                    </td>
+                    <td>
+                        @item.PhoneNumber
+                    </td>
+                    <td>
+                        @item.Email
+                    </td>
+                    <td>
+                        @item.UserId
+                    </td>
+                    <td>
+                        @item.DateOfRegistration
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+<h5 class="center-text">UPCOMING THREE DAYS BOOKINGS</h5>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Booking Date
+            </th>
+            <th>
+                Slot Time
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Creation Time
+            </th>
+            <th>
+                Booking Id
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (ViewBag.Bookings!=null)
+        {       
+            @foreach (var item in ViewBag.Bookings)
+            {
+                <tr>
+                    <td>
+                        @item.BookingDate
+                    </td>
+                    <td>
+                        @item.SlotTime
+                    </td>
+                    <td>
+                        @item.Status
+                    </td>
+                    <td>
+                        @item.CreationTime
+                    </td>
+                    <td>
+                        @item.BookingId
+                    </td>
+
+                </tr>
+            }
+        }
+    </tbody>
+   
+</table>
+
+@if (ViewBag.Cancellations != null)
+{
+    <h5 class="center-text">NEXT THREE DAYS CANCELLATIONS</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Booking Date
+                </th>
+                <th>
+                    Slot Time
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Creation Time
+                </th>
+                <th>
+                    Booking Id
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.Cancellations)
+            {
+                <tr>
+                    <td>
+                        @item.BookingDate
+                    </td>
+                    <td>
+                        @item.SlotTime
+                    </td>
+                    <td>
+                        @item.Status
+                    </td>
+                    <td>
+                        @item.CreationTime
+                    </td>
+                    <td>
+                        @item.BookingId
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+<div class="container">  
+    @using (Html.BeginForm("AdmnDashboard", "AdminDashboard", FormMethod.Post))  
+    {  
+        <div class="row">  
+            <div class="col-sm-2 text-lg-left">                
+                <label>From Date</label>                
+            </div>
+            <div class="col-sm-2">               
+                <input type="date" name="From" class="form-control" placeholder="Select Date" />
+            </div>
+            <div class="col-sm-2">
+                <label>To Date</label>               
+            </div>
+            <div class="col-sm-2">
+                <input type="date" name="To" class="form-control" placeholder="Select Date" />
+            </div>           
+            <div class="col-sm-2">
+                <input type="submit" value="Search" class="btn btn-primary form-control" />
+                
+            </div>
+            @if (ViewBag.DateRangeBookings != null)
+            {
+                <div class="col-sm-2">
+                    <a href="@Url.Action("ExportToExcel", "AdminDashboard")" class="export-link">
+                        <i class="fas fa-download"></i>
+                    </a>
+                </div>
+            }           
+        </div>
+        @if (ViewBag.DateRangeBookings != null)
+        {
+            <h5 class="center-text">BOOKINGS AS PER THE SELECTED FROM AND TO DATE</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Booking Date
+                        </th>
+                        <th>
+                            Slot Time
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Creation Time
+                        </th>
+                        <th>
+                            Booking Id
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in ViewBag.DateRangeBookings)
+                    {
+                        <tr>
+                            <td>
+                                @item.BookingDate
+                            </td>
+                            <td>
+                                @item.SlotTime
+                            </td>
+                            <td>
+                                @item.Status
+                            </td>
+                            <td>
+                                @item.CreationTime
+                            </td>
+                            <td>
+                                @item.BookingId
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        }
+         
+    }  
+</div>  
+
+@* <form asp-action="BookingsPerRange">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label">From</label>
+        <input asp-for="StartDate" type="date" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label">To</label>
+        <input asp-for="EndDate" type="date" class="form-control" />
+    </div>
+    <div class="form-group">
+         @Html.ActionLink("Book", "Register", new { id = Model.customer_id }) 
+        <input type="submit" value="search" class="btn btn-primary" />
+    </div>
+</form> *@
+
+@* <h1>DownloadExcel</h1> *@
+@* <a href="@Url.Action("ExportToExcel", "AdminDashboard")">Export to Excel</a> *@
+
+ <a href="@Url.Action("CustomerBookingDetails", "AdminDashboard")">Update CheckIn data</a>
+ 
+
+
+
+

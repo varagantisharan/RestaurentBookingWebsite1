@@ -1,0 +1,250 @@
+﻿@model IEnumerable<RestaurentBookingWebsite.Models.CustomerBookingModel>
+@* @{
+    Layout = null;
+} *@
+
+<style>
+
+
+    /* General Body Styles */
+    body {
+        background: #fafafa url(https://jackrugile.com/images/misc/noise-diagonal.png);
+        color: #444;
+        font: 100%/30px 'Helvetica Neue', helvetica, arial, sans-serif;
+        text-shadow: 0 1px 0 #fff;
+    }
+
+    /* Container Styling */
+    .container {
+        margin: 20px auto;
+        max-width: 1200px; /* Optional: adjust based on your layout needs */
+    }
+
+    /* Form Styles */
+    .form-control {
+        border-radius: 4px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        color: #fff;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        border: 1px solid transparent;
+        padding: 10px 16px;
+        font-size: 14px;
+        line-height: 1.5;
+        border-radius: 4px;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+    /* Table Styles */
+    table {
+        background: #f5f5f5;
+        border-collapse: separate;
+        box-shadow: inset 0 1px 0 #fff;
+        font-size: 12px;
+        line-height: 24px;
+        margin: 30px 0;
+        text-align: left;
+        width: 100%;
+        max-width: 1200px; /* Optional: Set a max-width for larger tables */
+    }
+
+    /* Header Styles */
+    th {
+        background: url(https://jackrugile.com/images/misc/noise-diagonal.png), linear-gradient(#777, #444);
+        border-left: 1px solid #555;
+        border-right: 1px solid #777;
+        border-top: 1px solid #555;
+        border-bottom: 1px solid #333;
+        box-shadow: inset 0 1px 0 #999;
+        color: #fff;
+        font-weight: bold;
+        padding: 10px 15px;
+        position: relative;
+        text-shadow: 0 1px 0 #000;
+    }
+
+        th:after {
+            background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,.08));
+            content: '';
+            display: block;
+            height: 25%;
+            left: 0;
+            margin: 1px 0 0 0;
+            position: absolute;
+            top: 25%;
+            width: 100%;
+        }
+
+        th:first-child {
+            border-left: 1px solid #777;
+            box-shadow: inset 1px 1px 0 #999;
+        }
+
+        th:last-child {
+            box-shadow: inset -1px 1px 0 #999;
+        }
+
+    /* Cell Styles */
+    td {
+        border-right: 1px solid #fff;
+        border-left: 1px solid #e8e8e8;
+        border-top: 1px solid #fff;
+        border-bottom: 1px solid #e8e8e8;
+        padding: 10px 15px;
+        position: relative;
+        transition: all 300ms;
+    }
+
+        td:first-child {
+            box-shadow: inset 1px 0 0 #fff;
+        }
+
+        td:last-child {
+            border-right: 1px solid #e8e8e8;
+            box-shadow: inset -1px 0 0 #fff;
+        }
+
+    /* Row Styles */
+    tr {
+        background: url(https://jackrugile.com/images/misc/noise-diagonal.png);
+    }
+
+        tr:nth-child(odd) td {
+            background: #f1f1f1 url(https://jackrugile.com/images/misc/noise-diagonal.png);
+        }
+
+        tr:last-of-type td {
+            box-shadow: inset 0 -1px 0 #fff;
+        }
+
+            tr:last-of-type td:first-child {
+                box-shadow: inset 1px -1px 0 #fff;
+            }
+
+            tr:last-of-type td:last-child {
+                box-shadow: inset -1px -1px 0 #fff;
+            }
+
+    /* Hover Effects */
+    tbody:hover td {
+        color: transparent;
+        text-shadow: 0 0 3px #aaa;
+    }
+
+    tbody:hover tr:hover td {
+        color: #444;
+        text-shadow: 0 1px 0 #fff;
+    }
+
+    /* Action Links in Table */
+    td a {
+        display: inline-block;
+        padding: 5px 10px;
+        color: #fff;
+        background-color: #007bff;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+        td a:hover {
+            background-color: #0056b3;
+        }
+
+</style>
+
+
+<div class="container">  
+    @using (Html.BeginForm("CustomerBookingDetails", "AdminDashboard", FormMethod.Post))
+    {
+        <div class="row">  
+            <div class="col-sm-2 text-lg-left"><label>Enter User Id</label></div>  
+            <div class="col-sm-3">
+                <input type="text" name="UserId" class="form-control" placeholder="User Id" />
+            </div>  
+            <div class="col-sm-2">  
+                <input type="submit" value="Search" class="btn btn-primary form-control" />  
+            </div>  
+            <br /><br />  
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>UserId</th>
+                    <th>BookingId</th>
+                    <th>CustomerId</th>
+                    <th>BookingDate</th>
+                    <th>Status</th>
+                    <th>Checkin Id</th>
+                    <th>Checkin time</th>
+                    <th>Checkout time</th>
+                    <th>Gross Amount</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Customer.UserId</td>
+                        <td>@item.Booking.BookingId</td>
+                        <td>@item.Customer.CustomerId</td>
+                        <td>@item.Booking.BookingDate</td>
+                        <td>@item.Booking.Status</td>
+                        @if (item.CheckIn != null)
+                        {
+                            <td>@item.CheckIn.CheckinId</td>
+                            <td>@item.CheckIn.CheckinTime</td>
+                            <td>@item.CheckIn.CheckOutTime</td>
+                            <td>@item.CheckIn.GrossAmount</td> 
+                            @if(item.CheckIn.CheckOutTime==null)
+                            {
+                                <td>
+                                    <a asp-action="CheckedOut" asp-route-id="@item.CheckIn.CheckinId">Check Out</a>
+                                </td>
+                            }                           
+                        }
+                        else
+                        {
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td>
+                                <a asp-action="CheckedIn" asp-route-id="@item.Booking.BookingId">CheckIn</a> 
+                            </td>
+                        }                     
+                    </tr>
+                } 
+            </tbody>
+        </table>    
+    }
+</div>
+
+<div>
+    @* <a asp-action="AdmnDashboard" >Back to Admin Page</a> *@
+    @Html.ActionLink("Back to Dashboard", "AdmnDashboard")
+    
+</div>
+
+

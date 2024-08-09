@@ -1,0 +1,117 @@
+﻿@model RestaurentBookingWebsite.DbModels.CheckIn
+@{
+    ViewData["Title"] = "CheckedOut";
+}
+
+<style>
+
+    body {
+        background: #fafafa url(https://jackrugile.com/images/misc/noise-diagonal.png);
+        color: #444;
+        font: 100%/30px 'Helvetica Neue', helvetica, arial, sans-serif;
+        text-shadow: 0 1px 0 #fff;
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    .container {
+        margin-top: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 8px;
+    }
+
+    .control-label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        width: 30%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .text-danger {
+        color: #a94442;
+    }
+
+    input[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+    a {
+        color: #007bff
+
+        text-decoration: none;
+    }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+</style>
+
+
+
+<h5>CHECK OUT FORM</h5>
+
+<hr />
+<div class="container">  
+    @using (Html.BeginForm())
+    {
+        <div class="row">
+            @Html.HiddenFor(model => model.CheckinId)
+            <div class="form-group">
+                @Html.LabelFor(model => model.GrossAmount, htmlAttributes: new { @class = "control-label" })
+                <div class="col-md-10">
+                        @* @Html.EditorFor(model => model.GrossAmount, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.GrossAmount, "Please enter valid amount", new { @class = "text-danger" }) *@
+                    <div class="col-md-10">
+                        <input asp-for="GrossAmount" class="form-control" required type="number" min="100" step="0.01" placeholder="Enter amount" />
+                        <span asp-validation-for="GrossAmount" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            @Html.HiddenFor(model => model.BookingId)
+            @Html.HiddenFor(model => model.CheckinTime)
+            @Html.HiddenFor(model => model.CheckOutTime)
+           @*  Checkin Id: @Html.DisplayFor(model => model.CheckinId)
+            Booking Id: @Html.DisplayFor(model => model.BookingId) *@
+            @* <p class="form-group">
+            <p class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </p>
+            </p> *@
+            <p class="form-group">
+                <p class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </p>
+            </p>
+        </div>
+    }
+</div>
+
+<div>
+    <a asp-action="CustomerBookingDetails">Back to Bookings view</a>
+</div>

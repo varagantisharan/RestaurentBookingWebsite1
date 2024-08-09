@@ -1,0 +1,414 @@
+﻿@* 
+@model Entity_Layer.AdminsModel
+
+@{
+    ViewData["Title"] = "Signup";
+}
+
+<style>
+    /* General Styles */
+    body {
+        background: #fafafa url(https://jackrugile.com/images/misc/noise-diagonal.png);
+        color: #444;
+        font: 100%/30px 'Helvetica Neue', helvetica, arial, sans-serif;
+        text-shadow: 0 1px 0 #fff;
+    }
+
+    /* Form Container */
+    .row {
+        margin: 20px 0;
+    }
+
+    .col-md-4 {
+        max-width: 600px; /* Adjust for a better fit */
+        margin: auto; /* Center the form */
+    }
+
+    /* Form Group */
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    /* Form Labels */
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    /* Form Inputs */
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    select {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Form Validation Messages */
+    .text-danger {
+        color: #dc3545;
+        font-size: 0.875em;
+        display: block;
+        margin-top: 5px;
+    }
+
+    /* Form Submit Button */
+    input[type="submit"] {
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+        padding: 10px 15px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+    /* Message Display */
+    .message {
+        margin-top: 20px;
+    }
+
+    .success {
+        color: #28a745;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+
+    /* Back to SignIn Link */
+    a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+</style>
+
+<h4>Signup</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Signup" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            
+            <div class="form-group">
+                <label asp-for="userid" class="control-label">UserId</label> *@
+               @*  @Html.TextBoxFor(Model => Model.userid,new {type = "text", required= "required",placeholder= "zzzenter Userid",Class = "form-control" }) *@
+             @*    @Html.ValidationMessageFor(Model => Model.userid,"",new {Class = "text-danger"}) *@
+                @* <input asp-for="userid" class="form-control" required  />
+                <span asp-validation-for="userid" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="first_name" class="control-label">First Name</label>
+                <input asp-for="first_name" class="form-control" required  />
+                <span asp-validation-for="first_name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="last_name" class="control-label">Last Name</label>
+                <input asp-for="last_name" class="form-control" required />
+                <span asp-validation-for="last_name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="password" class="control-label">Password</label>
+                <input asp-for="password" type="password" class="form-control" required />
+                <span asp-validation-for="password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="confirm_password" class="control-label">Confirm Password</label>
+                <input asp-for="confirm_password" type="password" class="form-control" required />
+                <span asp-validation-for="confirm_password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="email" class="control-label">Email</label>
+                <input asp-for="email" type="email" class="form-control" required />
+                <span asp-validation-for="email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="address" class="control-label">Address</label>
+                <input asp-for="address" class="form-control" required />
+                <span asp-validation-for="address" class="text-danger"></span>
+            </div>
+           
+            <div class="form-group">
+                <label asp-for="phone_number" class="control-label">Phone Number</label>
+                <input asp-for="phone_number" type="tel" class="form-control"  required pattern="[0-9]{10}" />
+                <span asp-validation-for="phone_number" class="text-danger"></span>
+            </div>
+            
+
+            <div class="form-group">
+                <label asp-for="Role" class="control-label">Role</label>
+                <select asp-for="Role" class="form-control" required>
+                    <option value="Admin">Admin</option>
+                    <option value="Customer">Customer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit"  value="Submit" class="btn btn-primary" />
+            </div>
+           
+        </form>
+
+    </div>
+</div>
+
+<div>
+    <a asp-action="SigninUser">Back to SignIn</a>
+</div> *@
+
+
+@* @section Scripts {
+    <script>
+        function Sucess() {
+            alert("Enter values");
+        }
+    </script>
+}
+ *@
+@* @section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var successMessage = '@TempData["SuccessMessage"]';
+            if (successMessage) {
+                alert(successMessage);
+            }
+        });
+    </script>
+} *@
+
+
+@model Entity_Layer.AdminsModel
+@{
+    ViewData["Title"] = "Signup";
+}
+
+<style>
+    /* General Styles */
+    body {
+        background: #fafafa url(https://jackrugile.com/images/misc/noise-diagonal.png);
+        color: #444;
+        font: 100%/30px 'Helvetica Neue', helvetica, arial, sans-serif;
+        text-shadow: 0 1px 0 #fff;
+    }
+
+    /* Form Container */
+    .row {
+        margin: 20px 0;
+    }
+
+    .col-md-4 {
+        max-width: 800px; /* Adjusted for wider form */
+        margin: auto; /* Center the form */
+    }
+
+    /* Form Group Container */
+    .form-group-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    /* Form Group */
+    .form-group {
+        flex: 1 1 100%; /* Each field takes full width by default */
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+
+    /* Form Labels */
+    label {
+        font-weight: bold;
+        margin-right: 10px;
+        width: 150px; /* Adjust width for alignment */
+    }
+
+    /* Form Inputs */
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        width: 100; /* Adjust width to account for label */
+        box-sizing: border-box;
+    }
+
+    /* Form Validation Messages */
+    .text-danger {
+        color: #dc3545;
+        font-size: 0.875em;
+        display: block;
+        margin-top: 5px;
+    }
+
+    /* Form Submit Button */
+    input[type="submit"] {
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+        padding: 10px 15px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    /* Message Display */
+    .message {
+        margin-top: 20px;
+    }
+
+    .success {
+        color: #28a745;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+
+    /* Back to SignIn Link */
+    a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .center-text {
+        text-align: center;
+    }
+
+    .message {
+        margin-top: 20px;
+    }
+
+   
+</style>
+
+<h3 class="center-text">SIGNUP</h3>
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Signup" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label asp-for="userid" class="control-label">UserId</label>
+                    <input asp-for="userid" class="form-control" required/>
+                    <span asp-validation-for="userid" class="text-danger"></span>
+                </div>
+                @if(ViewBag.Message != null)
+                {
+                    <p class="text-danger">@ViewBag.Message</p>
+                }
+            
+            </div>
+
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label asp-for="first_name" class="control-label" >First Name</label>
+                    <input asp-for="first_name" class="form-control" required />
+                    <span asp-validation-for="first_name" class="text-danger"></span>
+                    @Html.ValidationMessageFor(model => model.first_name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label asp-for="last_name" class="control-label">Last Name</label>
+                    <input asp-for="last_name" class="form-control" required />
+                    <span asp-validation-for="last_name" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label asp-for="password" class="control-label">Password</label>
+                    <input asp-for="password" type="password" class="form-control" required />
+                    <span asp-validation-for="password" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label asp-for="confirm_password" class="control-label">Confirm Password</label>
+                    <input asp-for="confirm_password" type="password" class="form-control" required />
+                    <span asp-validation-for="confirm_password" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label asp-for="email" class="control-label">Email</label>
+                    <input asp-for="email" type="email" class="form-control" required />
+                    <span asp-validation-for="email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label asp-for="address" class="control-label">Address</label>
+                    <input asp-for="address" class="form-control" required max="50" />
+                    <span asp-validation-for="address" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label asp-for="phone_number" class="control-label">Phone Number</label>
+                    <input asp-for="phone_number" type="tel" class="form-control"  required pattern="[0-9]{10}"  />
+                    <span asp-validation-for="phone_number" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label asp-for="Role" class="control-label">Role</label>
+                   @*  <input asp-for="Role" class="form-control" /> *@
+                    <select asp-for="Role"  class="form-control" required>
+                        <option value="Admin">Admin</option>
+                        <option value="Customer">Customer</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group-container">
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="SigninUser">Back to SignIn</a>
+</div>
+
