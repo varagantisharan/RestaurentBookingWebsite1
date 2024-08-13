@@ -6,7 +6,17 @@
 }
 
 <style>
-    /* Style for the form container */
+    body {
+        background: #fafafa url(https://s.tmimgcdn.com/scr/1200x627/95900/food-logo-template_95902-original.jpg);
+        */ color: #444;
+        font: 100%/30px 'Helvetica Neue', helvetica, arial, sans-serif;
+        text-shadow: 0 1px 0 #fff;
+        background-size: cover;
+        height: 100vh; 
+        width: 100vw; 
+        */ position: relative;
+    }
+    
     .row {
         margin: 20px 0;
     }
@@ -15,14 +25,14 @@
         margin-bottom: 15px;
     }
 
-    /* Style for form labels */
+    
     label {
         font-weight: bold;
         display: block;
         margin-bottom: 5px;
     }
 
-    /* Style for form inputs */
+ 
     input[type="date"], select {
         border: 1px solid #ddd;
         border-radius: 4px;
@@ -31,7 +41,7 @@
         box-sizing: border-box;
     }
 
-    /* Style for form buttons */
+ 
     input[type="submit"] {
         background-color: #007bff;
         border: none;
@@ -47,9 +57,9 @@
             background-color: #0056b3;
         }
 
-    /* Style for action links */
+    
     a {
-        color: #007bff;
+        color: #0000cd;
         text-decoration: none;
         font-weight: bold;
     }
@@ -58,14 +68,14 @@
             text-decoration: underline;
         }
 
-    /* Update for the table to be consistent with the rest of the styles */
+    
     table {
-        width: 100%; /* Full width for better responsiveness */
-        max-width: 1000px; /* Adjusted for larger screens */
+        width: 100%; 
+        max-width: 1000px; 
         margin: 30px auto;
     }
 
-    /* Keep the existing styles for table headers */
+    
     th {
         background: linear-gradient(#777, #444);
         border-left: 1px solid #555;
@@ -79,16 +89,16 @@
         text-shadow: 0 1px 0 #000;
     }
 
-    /* Keep the existing styles for table rows */
+    
     tr {
-        background: #fafafa; /* Light background for table rows */
+        background: #fafafa; 
     }
 
         tr:nth-child(odd) td {
-            background: #f1f1f1; /* Alternating row colors */
+            background: #f1f1f1; 
         }
 
-        /* Ensure the last row's shadow is consistent */
+        
         tr:last-of-type td {
             box-shadow: inset 0 -1px 0 #fff;
         }
@@ -101,7 +111,7 @@
                 box-shadow: inset -1px -1px 0 #fff;
             }
 
-    /* Hover effects for table rows */
+   
     tbody:hover td {
         color: transparent;
         text-shadow: 0 0 3px #aaa;
@@ -114,17 +124,17 @@
 
     .center-container {
         display: flex;
-        justify-content: center; /* Center horizontally */
-        align-items: center; /* Center vertically */
-        min-height: 50vh; /* Full viewport height */
-        padding: 20px; /* Optional: add some padding around */
-        box-sizing: border-box; /* Include padding in width/height calculations */
+        justify-content: center; 
+        align-items: center; 
+        min-height: 50vh; 
+        padding: 20px; 
+        box-sizing: border-box; 
     }
 
-    /* Style for forms and content within the container */
+   
     .content {
-        max-width: 800px; /* Maximum width for the content */
-        width: 300%; /* Full width up to the maximum */
+        max-width: 800px; 
+        width: 300%; 
     }
 
     .top-right {
@@ -143,14 +153,14 @@
 <div class="center-container">
     <div class="content">
  <div class="top-right">
-     <h4>@TempData["UserName"]</h4> 
- </div>
+      <h4> @TempData["UserName"]</h4>
+</div>
  
 
-<h4>Booking</h4>
+<h3>BOOKING</h3>
 <div class="row">
     <div class="col-md-4">
-                <form asp-action="Register" asp-route-id=@TempData["CustId"]>
+                <form asp-action="Register" asp-route-id=@ViewBag.CustomerId> @* @TempData["CustId"] *@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @*<div class="form-group">
                 <label asp-for="CustomerId" class="control-label"></label>
@@ -162,12 +172,7 @@
                 <label asp-for="booking_date" class="control-label">Booking Date</label>
                         <input asp-for="booking_date" type="date" class="form-control" min=@TempData["minDate"] max=@TempData["maxDate"] value="@defaultDate" />
             </div>
-            @* <div class="form-group">
-                <label asp-for="booking_date" class="control-label"></label>
-                <input asp-for="booking_date" class="form-control" />
-                <span asp-validation-for="booking_date" class="text-danger"></span>
-            id="start" name="start"
-            </div> *@
+            
             <div class="form-group">
                 <label asp-for="slot_Time" class="control-label">Slot Time</label>
                 <select asp-for="slot_Time" class="form-control">
@@ -188,7 +193,7 @@
     </div>
 </div>
 <div class="form-group">
-    @Html.ActionLink("View My Bookings", "MyBookings", new { id = @TempData["CustId"] })
+    @Html.ActionLink("View My Bookings", "MyBookings", new { id = @ViewBag.CustomerId })
 </div>    
 </div>
 </div>

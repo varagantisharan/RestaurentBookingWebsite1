@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace RestaurentBookingWebsite.DbModels;
 
@@ -15,5 +16,6 @@ public partial class CheckIn
 
     public int? GrossAmount { get; set; }
 
+    [JsonIgnore]
     public virtual Booking Booking { get; set; } = null!;
 }

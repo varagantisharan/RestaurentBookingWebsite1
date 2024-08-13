@@ -3,26 +3,13 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
-using RestaurentBookingWebsite.Services;
-using RestaurentBookingWebsite.Controllers;
-using MailKit;
-using RestaurentBookingWebsite.DbModels;
-using DocumentFormat.OpenXml.Spreadsheet;
-//using Session_State.Models;
+
 
 namespace RestaurentBookingWebsite.Controllers
 {
     public class LoginPageController : Controller
     {
         string Baseurl = "http://localhost:5093/api/";
-        private ILogin _loginser;
-        private readonly IMail mailService;
-        public LoginPageController(ILogin loginser, IMail mailService)
-        {
-            _loginser = loginser;
-            this.mailService = mailService;
-        }
         public IActionResult SigninUser()
         {
             return View();
@@ -56,22 +43,22 @@ namespace RestaurentBookingWebsite.Controllers
 
                     if (user.Result.Role == "Customer")
                     {
-                        TempData["CustomerId"] = user.Result.admin_id;
+                        HttpContext.Session.SetString("CustomerName", name);
+                        HttpContext.Session.SetInt32("CustomerId", id);
                         return RedirectToAction("CustDashboard", "CustomerDashboard", new { @id = user.Result.admin_id });
 
                     }
                     else if (user.Result.Role == "Admin")
                     {
                         HttpContext.Session.SetString("Username", name);
-                        TempData["AdminId"] = user.Result.admin_id;
-                        return RedirectToAction("AdmnDashboard", "AdminDashboard");//, new { @id = user.Result.admin_id });
+                        return RedirectToAction("AdmnDashboard", "AdminDashboard");
                     }
                     else
                     {
                         return RedirectToAction("SigninUser");
                     }
                 }
-                ModelState.AddModelError(string.Empty, "Could not update checkout details");
+               
                 return RedirectToAction("SigninUser");
             }
 
@@ -79,17 +66,12 @@ namespace RestaurentBookingWebsite.Controllers
 
         public IActionResult Signup()
         {
+
             return View();
         }
         [HttpPost]
         public IActionResult Signup(AdminsModel newuser)
         {
-            //var isUseridExists = DbModels.Customer.Any(x => x.userid == newuser.userid);
-            //if(isUseridExists)
-            //{
-            //    ModelState.AddModelError("userid", "user with this userid alredy exists");
-            //    return View();
-            //}
             try
             {
                 if (newuser.password == newuser.confirm_password)
@@ -140,10 +122,7 @@ namespace RestaurentBookingWebsite.Controllers
                             {
                                 throw new Exception("Signup is not successful");
                             }
-                        }
-                        ModelState.AddModelError(string.Empty, "Signup is not successful");
-                        //return RedirectToAction("Signup");
-                        
+                        }                       
                     }
                     return ViewBag.Message;
                 }
@@ -152,11 +131,12 @@ namespace RestaurentBookingWebsite.Controllers
                     throw new Exception("Password and Confirm Password must be same");
                 }
             }
+
             catch (Exception e)
-            {
-                ModelState.AddModelError(string.Empty, "Signup failed. Please try again later.");
+            {               
                 throw new Exception("Signup is not successful");
             }
+
         }
 
         public async Task<IActionResult> Signout()

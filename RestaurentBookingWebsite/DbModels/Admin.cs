@@ -7,6 +7,8 @@ public partial class Admin
 {
     public int AdminId { get; set; }
 
+    public string UserId { get; set; } = null!;
+
     public string FirstName { get; set; } = null!;
 
     public string LastName { get; set; } = null!;
@@ -19,7 +21,6 @@ public partial class Admin
 
     public string? PhoneNumber { get; set; }
 
-    public string UserId { get; set; } = null!;
-
+   
     public DateTime? DateOfRegistration { get; set; }
 }

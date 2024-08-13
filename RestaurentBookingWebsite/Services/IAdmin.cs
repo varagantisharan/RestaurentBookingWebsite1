@@ -6,11 +6,12 @@ namespace RestaurentBookingWebsite.Services
 {
     public interface IAdmin
     {
+        public List<Admin> GetAllAdminDetails();
         public List<Customer> CustRegisteredInSevenDays();
         public List<Booking> UpcomingThreeDaysBookings();
         public List<Booking> CancellationForNextThreedays();
         public List<Booking> BookingsAsPerDateRange(DateTime from, DateTime to);
-        public List<Customer> GetBookedCustomerDetails(List<Booking> bookingmodel);
+        public List<Customer> GetBookedCustomerDetails();
         public List<CheckIn> GetAllCheckIns();
 
         public CheckIn GetCheckIn(int id);

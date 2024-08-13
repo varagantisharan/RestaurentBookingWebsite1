@@ -1,4 +1,5 @@
-﻿using Entity_Layer;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using Entity_Layer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestaurentBookingWebsite.DbModels;
@@ -10,27 +11,17 @@ namespace RestaurentBookingWebsite.Controllers
     [ApiController]
     public class CustomerAPIController : ControllerBase
     {
-        private LoginService _loginService;
-        private BookingServices _bookingsServices;
-        private readonly IMail mailService;
+        private IBooking _bookingsServices;
 
-        public CustomerAPIController(LoginService loginService, BookingServices bookingServices, IConfiguration configuration, IMail mailService)
+        public CustomerAPIController(IBooking bookingServices)
         {
-            _loginService = loginService;
             _bookingsServices = bookingServices;
-            this.mailService = mailService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Admin>>> GetCustomer()
-        {
-            return null;//await Admins.ToListAsync();
-        }
-
-        
+        //This method is to get the bookings for the particular customer id
         [HttpGet]
         [Route("GetBookings/{id}")]
-        public async Task<ActionResult> GetBookings(int id)
+        public async Task<ActionResult> GetBookings(int id) //id=customer id
         {
             var res = _bookingsServices.GetCustomerBookingDetails(id);
 
@@ -41,12 +32,11 @@ namespace RestaurentBookingWebsite.Controllers
 
             return Ok(res);
         }
+
         [HttpPost]
         [Route("NewBooking")]
-        public async Task<IActionResult> NewBooking([FromBody] Dictionary<string,string> data)//BookingsModel model)
+        public async Task<IActionResult> NewBooking([FromBody] Dictionary<string,string> data)
         {
-            //string formattedDate = model.booking_date.ToShortDateString() + " " + model.slot_Time;
-            //model.booking_date = Convert.ToDateTime(formattedDate);
             BookingsModel bookings = new BookingsModel();
             bookings.month = int.Parse(data["month"]);
             bookings.date = int.Parse(data["date"]);
@@ -74,6 +64,33 @@ namespace RestaurentBookingWebsite.Controllers
                 return BadRequest("Cancellation is allowed only 24 hrs prior to the booking slot");
             }
             return BadRequest("Booking is not successful");
+        }
+
+
+        [HttpGet]
+        [Route("GetBookingsById/{id}")]
+        public async Task<ActionResult> GetBookingsById(int id)
+        {
+            var res = _bookingsServices.GetBookingDetails(id);
+
+            if (res == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Route("GetCustomerById/{id}")]
+        public async Task<IActionResult> GetCustomerById(int id)
+        {
+            var customerDetails = _bookingsServices.GetCustomerDetails(id);
+            if (customerDetails!=null)
+            {
+                return Ok(customerDetails);
+            }
+            return BadRequest("No customer found with the given Id");
         }
 
     }

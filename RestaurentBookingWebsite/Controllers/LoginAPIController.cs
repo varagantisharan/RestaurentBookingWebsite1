@@ -10,11 +10,11 @@ namespace RestaurentBookingWebsite.Controllers
     public class LoginAPIController : ControllerBase
     {
         private ILogin _loginser;
-        private readonly IMail mailService;
-        public LoginAPIController(ILogin loginser, IMail _mailService)
+        private readonly IMail _mailService;
+        public LoginAPIController(ILogin loginser, IMail mailService)
         {
             _loginser = loginser;
-            mailService = _mailService;
+            _mailService = mailService;
         }
 
         [HttpPost]
@@ -69,7 +69,7 @@ namespace RestaurentBookingWebsite.Controllers
         {
             try
             {
-                var res = mailService.SendMail(mail);
+                var res = _mailService.SendMail(mail);
                 return Ok(res);
             }
             catch (Exception ex)

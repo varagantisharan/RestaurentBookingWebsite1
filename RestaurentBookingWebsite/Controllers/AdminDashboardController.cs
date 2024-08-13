@@ -1,41 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestaurentBookingWebsite.Services;
-using System.IO;
 using System.Data;
-using System.Web;
-using System.IO;
-using Microsoft.AspNetCore.Http;
 using RestaurentBookingWebsite.DbModels;
 using Entity_Layer;
-using DocumentFormat.OpenXml.Spreadsheet;
-using System.Diagnostics.CodeAnalysis;
-using Humanizer;
-using DocumentFormat.OpenXml.Bibliography;
 using RestaurentBookingWebsite.Models;
-using RestaurentBookingWebsite.Controllers;
-using Newtonsoft.Json;
-using System.Net.Http.Headers;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using System.Net.Http.Json;
-using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 
 namespace RestaurentBookingWebsite.Controllers
 {
     [Authorize]
     public class AdminDashboardController : Controller
-    {
-        string Baseurl = "http://localhost:5093/api/";
-        private ILogin _loginService;
-        private IAdmin _adminService;
-
-        int admin_id;
-        public AdminDashboardController(ILogin loginService, IAdmin adminService)
-        {
-            _loginService = loginService;
-            _adminService = adminService;
-        }
+    {     
         public async Task<IActionResult> AdmnDashboard()//int id)
         {
             ViewBag.Name = HttpContext.Session.GetString("Username");
@@ -69,9 +46,6 @@ namespace RestaurentBookingWebsite.Controllers
                 }
 
             }
-            //ViewBag.Bookings = _adminService.UpcomingThreeDaysBookings();
-            //ViewBag.Customers = _adminService.CustRegisteredInSevenDays();
-            //ViewBag.Cancellations = _adminService.CancellationForNextThreedays();
             return View();
 
         }
@@ -79,12 +53,21 @@ namespace RestaurentBookingWebsite.Controllers
         [HttpPost]
         public async Task<IActionResult> AdmnDashboard(DateTime From, DateTime To)
         {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+            data["FromDate"] = From.Day.ToString();
+            data["FromMonth"] = From.Month.ToString();
+            data["FromYear"] = From.Year.ToString();
+            data["ToDate"] = To.Day.ToString();
+            data["ToMonth"] = To.Month.ToString();
+            data["ToYear"] = To.Year.ToString();
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:5093/api/");
                 HttpResponseMessage Res1 = await client.GetAsync("AdminAPI/UpcomingThreeDaysBookings/");
                 HttpResponseMessage Res2 = await client.GetAsync("AdminAPI/CustRegisteredInSevenDays/");
                 HttpResponseMessage Res3 = await client.GetAsync("AdminAPI/CancellationForNextThreedays/");
+                HttpResponseMessage Res4 = await client.PostAsJsonAsync("AdminAPI/DateRangeBookings/", data);
+
                 if (Res1.IsSuccessStatusCode)
                 {
                     var Response = Res1.Content.ReadAsAsync<List<Booking>>();
@@ -103,74 +86,96 @@ namespace RestaurentBookingWebsite.Controllers
                     Response.Wait();
                     ViewBag.Cancellations = Response.Result;
                 }
+                if (Res4.IsSuccessStatusCode)
+                {
+                    var Response = Res4.Content.ReadAsAsync<List<Booking>>();
+                    Response.Wait();
+                    ViewBag.DateRangeBookings = Response.Result;
+                }
 
             }            
-            var bookings = _adminService.BookingsAsPerDateRange(From,To);
             TempData["FromDate"] = From;
             TempData["ToDate"] = To;
-            ViewBag.DateRangeBookings = bookings;
-            return View(bookings);
+            return View();
         }
 
-        public IActionResult ExportToExcel()
+        public async Task<IActionResult> ExportToExcel()
         {
             DateTime From = (DateTime)TempData["FromDate"];
             DateTime To = (DateTime)TempData["ToDate"];
-            var bookings = _adminService.BookingsAsPerDateRange(From, To);
-            ExcelFileHandling excelFileHandling = new ExcelFileHandling();
-            var stream = excelFileHandling.CreateExcelFile(bookings);
-            string excelName = $"Bookings.xlsx";
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+            Dictionary<string, string> data = new Dictionary<string, string>();
+            data["FromDate"] = From.Day.ToString();
+            data["FromMonth"] = From.Month.ToString();
+            data["FromYear"] = From.Year.ToString();
+            data["ToDate"] = To.Day.ToString();
+            data["ToMonth"] = To.Month.ToString();
+            data["ToYear"] = To.Year.ToString();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                var Res = client.PostAsJsonAsync("AdminAPI/DateRangeBookings/", data);
+                Res.Wait();
+
+                var Result = Res.Result;
+                if (Result.IsSuccessStatusCode)
+                {
+                    var Response = Result.Content.ReadAsAsync<List<Booking>>();
+                    Response.Wait();
+                    var bookings = Response.Result;
+                    if (bookings.Count >= 1)
+                    {
+                        ExcelFileHandling excelFileHandling = new ExcelFileHandling();
+                        var stream = excelFileHandling.CreateExcelFile(bookings);
+                        string excelName = $"Bookings.xlsx";
+                        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+                    }
+
+                }
+                return ViewBag.ErrorMessage = "Could not load data";
+            }
         }
 
 
-        public IActionResult CustomerBookingDetails()
-        {
-            List <Booking> bookings = _adminService.UpcomingThreeDaysBookings();
-            List<Customer> customers = _adminService.GetBookedCustomerDetails(bookings);
-            List<CheckIn> checkins = _adminService.GetAllCheckIns();
+        public async Task<IActionResult> CustomerBookingDetails()
+        {            
+            using (var client = new HttpClient())
+            {
+                List<CustomerBookingModel> customerBookings = new List<CustomerBookingModel>();
+                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                HttpResponseMessage Res1 = await client.GetAsync("AdminAPI/GetCustomerBookingDetails/");                
 
-            var customerBookings = from c in customers
-                                   join b in bookings on c.CustomerId equals b.CustomerId into table1
-                                   from b in table1
-                                   join ch in checkins on b.BookingId equals ch.BookingId into table2
-                                   from ch in table2.DefaultIfEmpty().ToList()
-                                   select new CustomerBookingModel
-                                   {
-                                       Customer = c,
-                                       Booking = b,
-                                       CheckIn = ch,
-                                   };
-
-            return View(customerBookings);
+                if (Res1.IsSuccessStatusCode)
+                {
+                    customerBookings = Res1.Content.ReadAsAsync<List<CustomerBookingModel>>().Result;
+                }
+                return View(customerBookings);
+            }           
         }
 
         [HttpPost]
-        public IActionResult CustomerBookingDetails(String UserId)
+        public async Task<IActionResult> CustomerBookingDetails(String UserId)
         {
-            List<Booking> bookings = _adminService.UpcomingThreeDaysBookings();
-            List<Customer> customers = _adminService.GetBookedCustomerDetails(bookings).Where(c => c.UserId==UserId).ToList();
-            List<CheckIn> checkins = _adminService.GetAllCheckIns();
+            using (var client = new HttpClient())
+            {
+                List<CustomerBookingModel> customerBookings = new List<CustomerBookingModel>();
+                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                var Res = client.PostAsJsonAsync("AdminAPI/GetCustomerBookingByUserId/", UserId);
+                Res.Wait();
 
-            var customerBookings = from c in customers
-                                   join b in bookings on c.CustomerId equals b.CustomerId into table1
-                                   from b in table1
-                                   join ch in checkins on b.BookingId equals ch.BookingId into table2
-                                   from ch in table2.DefaultIfEmpty(). ToList()    
-                                   select new CustomerBookingModel
-                                   {
-                                       Customer = c,
-                                       Booking = b,
-                                       CheckIn = ch,
-                                   };
-            return View(customerBookings);
+                var Result = Res.Result;
+                if (Result.IsSuccessStatusCode)
+                {
+                    customerBookings = Result.Content.ReadAsAsync<List<CustomerBookingModel>>().Result;
+                }
+                return View(customerBookings);
+            }           
         }
 
         public async Task<ActionResult> CheckedIn(int id)
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(Baseurl);
+                client.BaseAddress = new Uri("http://localhost:5093/api/");
                 
                 var Res = client.PostAsJsonAsync("AdminAPI/CheckIn/", id);
                 Res.Wait();
@@ -210,12 +215,14 @@ namespace RestaurentBookingWebsite.Controllers
         {
             using (var client = new HttpClient())
             {
-                //http://localhost:5093/api/AdminAPI/CheckOut
-                client.BaseAddress = new Uri(Baseurl);
+                client.BaseAddress = new Uri("http://localhost:5093/api/");
                 CheckInsModel model = new CheckInsModel();
                 model.checkin_id = checkIn.CheckinId;
                 model.gross_amount = (float)checkIn.GrossAmount;
                 model.booking_id = checkIn.BookingId;
+                List<Admin> adminDetailsLst = new List<Admin>();
+                Booking bookingDetails = new Booking();
+                Customer customerDetails = new Customer();
 
                 var Res = client.PostAsJsonAsync("AdminAPI/CheckOut/", model);
                 Res.Wait();
@@ -223,6 +230,46 @@ namespace RestaurentBookingWebsite.Controllers
                 var Result = Res.Result;
                 if (Result.IsSuccessStatusCode)
                 {
+                    HttpResponseMessage Res2 = await client.GetAsync("CustomerAPI/GetBookingsById/" + checkIn.BookingId.ToString());
+                    if (Res2.IsSuccessStatusCode)
+                    {
+                        var Resp = Res2.Content.ReadAsAsync<Booking>();
+                        Resp.Wait();
+
+                        bookingDetails = Resp.Result;
+                        HttpResponseMessage Res4 = await client.GetAsync("CustomerAPI/GetCustomerById/" + bookingDetails.CustomerId.ToString());
+                        if (Res4.IsSuccessStatusCode)
+                        {
+                            var Respon = Res4.Content.ReadAsAsync<Customer>();
+                            Respon.Wait();
+                            customerDetails = Respon.Result;
+                        }
+                    }
+
+                    if (customerDetails != null)
+                    {
+                        MailRequest mail = new MailRequest();
+
+                        string message = "Dear " + customerDetails.FirstName + " " + customerDetails.LastName + " .<br>" +
+                        "Thank you for visting our Restaurant,Your booking id has been closed.<br>" +
+                         "Booking Id :" + bookingDetails.BookingId +
+                        "<br>Slot Date and time :" + checkIn.CheckOutTime +
+                        "<br>Amount:" + checkIn.GrossAmount +
+                        "<br> Vist Again" +
+                        "<br>Thank You." +
+                        "<br>Best regards," +
+                        "<br>Sharan";
+                        string subject = "Check out has been confirmed";
+
+                        mail.Body = message;
+                        mail.Subject = subject;
+                        mail.ToEmail = customerDetails.Email;
+
+                        var resp = client.PostAsJsonAsync("LoginAPI/SendEmail/", mail);
+                        resp.Wait();
+
+                        var respResult = resp.Result;
+                    }
                     return RedirectToAction("CustomerBookingDetails", "AdminDashboard");
                 }
                 ModelState.AddModelError(string.Empty, "Could not update checkout details");

@@ -13,6 +13,8 @@ namespace Entity_Layer
     {
         public int customer_id { get; set; }
 
+        public int booking_id { get; set; }
+
         //[DataType(DataType.Date)]
 
         //[DataType(DataType.DateTime)]

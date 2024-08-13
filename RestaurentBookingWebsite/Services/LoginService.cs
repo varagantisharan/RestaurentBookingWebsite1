@@ -195,24 +195,7 @@ namespace RestaurentBookingWebsite.Services
             return decryptpwd;
         }
 
-        public string GetUserName(int id,string role)
-        {
-            if (role=="Customer")
-            {
-                var IsCustomer = db.Customers.Find(id);
-                return IsCustomer.FirstName + " " + IsCustomer.LastName;
-            }
-            else if (role=="Admin")
-            {
-                var IsAdmin = db.Admins.Find(id);
-                return IsAdmin.FirstName + " " + IsAdmin.LastName;
-            }
-            else
-            {
-                throw new Exception("Enter valid details");
-            }
-        }
-
+       
         
     }
 }

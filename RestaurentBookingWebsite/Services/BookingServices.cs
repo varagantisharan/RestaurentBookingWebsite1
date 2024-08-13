@@ -76,22 +76,22 @@ namespace RestaurentBookingWebsite.Services
                 throw new Exception("Customer not Found");
             }
         }
-        public List<Admin> GetAllAdminDetails()
-        {
+        //public List<Admin> GetAllAdminDetails()
+        //{
 
-            List<Admin> GetAdmins = new List<Admin>();
+        //    List<Admin> GetAdmins = new List<Admin>();
             
-            GetAdmins = db.Admins.ToList();
+        //    GetAdmins = db.Admins.ToList();
 
-            if(GetAdmins!=null)
-            {
-                return GetAdmins;
-            }
-            else
-            {
-                throw new Exception("No records found in Admin Database");
-            }
-        }
+        //    if(GetAdmins!=null)
+        //    {
+        //        return GetAdmins;
+        //    }
+        //    else
+        //    {
+        //        throw new Exception("No records found in Admin Database");
+        //    }
+        //}
         public Booking GetBookingDetails(int custId)
         {
             var bookingDetails = db.Bookings.OrderByDescending(p => p.BookingId).FirstOrDefault();
@@ -132,54 +132,7 @@ namespace RestaurentBookingWebsite.Services
                     {
                         bookingDetails.Status = "Cancelled";
                         db.Entry(bookingDetails).State = EntityState.Modified;
-                        db.SaveChanges();
-
-                        var customerdetails = db.Customers.Find(bookingDetails.CustomerId);
-                        var adminDetails = GetAllAdminDetails();
-
-
-                        if (customerdetails != null)
-                        {
-                            MailRequest mail = new MailRequest();
-
-                            string message = "Dear " + customerdetails.FirstName + " " + customerdetails.LastName + " .<br>" +
-                            "Your booking has been Cancelled successfully.<br>" +
-                             "Booking Id :" + bookingDetails.BookingId +
-                            "<br>Slot Date and time :" + bookingDetails.BookingDate +
-                            "<br>Thank You." +
-                            "<br>Best regards," +
-                            "<br>Sharan";
-                            string subject = "Cancellation has been confirmed";
-
-                            mail.Body = message;
-                            mail.Subject = subject;
-                            mail.ToEmail = customerdetails.Email;
-
-
-
-                            mailService.SendEmail(mail);
-                        }
-                        if (adminDetails != null)
-                        {
-                            foreach (Admin admin in adminDetails)
-                            {
-                                MailRequest mail = new MailRequest();
-                                string message = "Dear Admin " + admin.FirstName + " " + admin.LastName +
-                                                 ",<br>A new Cancelletion has been confirmed by the Customer: " + customerdetails.FirstName + " " + customerdetails.LastName +
-                                                 " with the booking Id: " + bookingDetails.BookingId +
-                                                 "<br>Slot Date and time :" + bookingDetails.BookingDate +
-                                                 "<br>Thank You.";
-
-                                string subject = "Cancellation has been confirmed";
-
-                                mail.Body = message;
-                                mail.Subject = subject;
-                                mail.ToEmail = admin.Email;
-
-                                mailService.SendEmail(mail);
-                            }
-                        }
-
+                        db.SaveChanges();                      
                         return 1;
                     }
                     else

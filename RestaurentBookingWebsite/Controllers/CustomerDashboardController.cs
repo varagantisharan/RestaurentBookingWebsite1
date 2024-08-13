@@ -1,42 +1,21 @@
-﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using Entity_Layer;
+﻿using Entity_Layer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestaurentBookingWebsite.DbModels;
 using RestaurentBookingWebsite.Services;
-using System.Globalization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace RestaurentBookingWebsite.Controllers
-
 {
     [Authorize]
     public class CustomerDashboardController : Controller
-    {
-        private LoginService _loginService;
-        private BookingServices _bookingsServices;
-        private readonly IMail mailService;
-       
-
-        public CustomerDashboardController(LoginService loginService,BookingServices bookingServices, IConfiguration configuration, IMail mailService)
-        {
-            _loginService = loginService;
-            _bookingsServices = bookingServices;
-            this.mailService = mailService;
-        }
-        
+    {       
         public IActionResult CustDashboard(int id)
         {
-            TempData["CustId"] = id;
-            int custid = Convert.ToInt32(TempData["CustId"]);
-            int cid = Convert.ToInt32(TempData["CustomerId"]);
-            string Name = _loginService.GetUserName(id, "Customer");
-            TempData["UserName"] = Name;
+            TempData["UserName"] = HttpContext.Session.GetString("CustomerName");
+            ViewBag.CustomerId = HttpContext.Session.GetInt32("CustomerId");
             DateTime current_day = DateTime.Now;
             TempData["minDate"] = current_day.ToString("yyyy-MM-dd");
-            //TempData["minDate"] = current_day.AddDays(1).ToString("yyyy-MM-dd");
             TempData["maxDate"] = current_day.AddDays(2).ToString("yyyy-MM-dd");
             return View();
         }
@@ -49,14 +28,10 @@ namespace RestaurentBookingWebsite.Controllers
 
 
         [HttpPost]
-        public IActionResult Register(BookingsModel model, int id)
+        public async Task<IActionResult> Register(BookingsModel model, int id)
         {
-            //int custid = Convert.ToInt32(TempData["CustId"]);
-            //int cid = Convert.ToInt32(TempData["CustomerId"]);
             model.customer_id = id ;
-            //var res= _bookingsServices.Register(model);
-            var adminDetails = _bookingsServices.GetAllAdminDetails();
-
+            ViewBag.CustomerId = HttpContext.Session.GetInt32("CustomerId");
             model.date = model.booking_date.Day;
             model.month = model.booking_date.Month;
             Dictionary<string,string> data = new Dictionary<string,string>();
@@ -64,8 +39,10 @@ namespace RestaurentBookingWebsite.Controllers
             data["month"] = model.month.ToString();
             data["customer_id"]=model.customer_id.ToString();
             data["slot_time"] = model.slot_Time;
-            TempData["CustId"] = model.customer_id;
-            TempData["CustomerId"] = model.customer_id;
+
+            List<Admin> adminDetailsLst = new List<Admin>();
+            Booking bookingDetails = new Booking();
+            Customer customerDetails = new Customer();
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:5093/api/");
@@ -79,41 +56,55 @@ namespace RestaurentBookingWebsite.Controllers
                     var res = Result.Content.ReadAsAsync<int>().Result;
                     if (res == 1 )
                     {
-                        var IsValidCustomer = _bookingsServices.GetCustomerDetails(model.customer_id);
-                        var IsValidBooking = _bookingsServices.GetBookingDetails(model.customer_id);
+                        HttpResponseMessage Res2 = await client.GetAsync("CustomerAPI/GetBookingsById/" + id.ToString());
+                        HttpResponseMessage Res3 = await client.GetAsync("AdminAPI/GetAllAdminDetails/");
+                        HttpResponseMessage Res4 = await client.GetAsync("CustomerAPI/GetCustomerById/" + model.customer_id);
 
-                        if (IsValidCustomer != null && IsValidBooking != null)
+                        if (Res2.IsSuccessStatusCode)
+                        {
+                            var Resp = Res2.Content.ReadAsAsync<Booking>();
+                            Resp.Wait();
+
+                            bookingDetails = Resp.Result;                                                      
+                        }
+                        if (Res3.IsSuccessStatusCode)
+                        {
+                            var Resp = Res3.Content.ReadAsAsync<List<Admin>>();
+                            Resp.Wait();
+
+                            adminDetailsLst = Resp.Result;
+                        }
+                        if (Res4.IsSuccessStatusCode)
+                        {
+                            var Respn = Res4.Content.ReadAsAsync<Customer>();
+                            Respn.Wait();
+                            customerDetails = Respn.Result;
+                        }
+                        if (customerDetails != null && bookingDetails != null)
                         {
                             MailRequest mail = new MailRequest();
 
-                            string message = "Dear " + IsValidCustomer.FirstName + " " + IsValidCustomer.LastName + " .<br>" +
+                            mail.Body = "Dear " + customerDetails.FirstName + " " + customerDetails.LastName + " .<br>" +
                             "Your booking has been completed successfully.<br>" +
-                            "Booking Id :" + IsValidBooking.BookingId +
-                            "<br>Slot Date and time :" + IsValidBooking.BookingDate +
+                            "Booking Id :" + bookingDetails.BookingId +
+                            "<br>Slot Date and time :" + bookingDetails.BookingDate +
                             "<br>Thank You." +
                             "<br>Best regards," +
                             "<br>Sharan";
-                            string subject = "Booking has been confirmed";
-
-                            mail.Body = message;
-                            mail.Subject = subject;
-                            mail.ToEmail = IsValidCustomer.Email;
-
+                            mail.Subject = "Booking has been confirmed";
+                            mail.ToEmail = customerDetails.Email;
                             var resp = client.PostAsJsonAsync("LoginAPI/SendEmail/", mail);
-                            Res.Wait();
-
+                            resp.Wait();
                             var respResult = resp.Result;
-                            //  mailService.SendEmail(mail);
-
                         }
-                        if (adminDetails != null)
+                        if (adminDetailsLst != null)
                         {
-                            foreach (var admin in adminDetails)
+                            foreach (var admin in adminDetailsLst)
                             {
                                 MailRequest mail = new MailRequest();
                                 string message = "Dear Admin " + admin.FirstName + " " + admin.LastName +
-                                                 ",<br>A new booking has been confirmed by the Customer: " + IsValidCustomer.FirstName + " " + IsValidCustomer.LastName +
-                                                 " with the booking Id: " + IsValidBooking.BookingId +
+                                                 ",<br>A new booking has been confirmed by the Customer: " + customerDetails.FirstName + " " + customerDetails.LastName +
+                                                 " with the booking Id: " + bookingDetails.BookingId +
                                                  "<br>Thank You.";
 
                                 string subject = "Booking has been confirmed";
@@ -122,22 +113,17 @@ namespace RestaurentBookingWebsite.Controllers
                                 mail.Subject = subject;
                                 mail.ToEmail = admin.Email;
 
-
-
                                 var resp = client.PostAsJsonAsync("LoginAPI/SendEmail/", mail);
                                 Res.Wait();
 
                                 var respResult = resp.Result;
-                               
 
-                                //  mailService.SendEmail(mail);
                             }
                         }
                         return RedirectToAction("CustDashboard", "CustomerDashboard", new { @id = model.customer_id });
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Could not update booking details");
                         throw new Exception("New Booking is not successful");
                     }
                 }               
@@ -152,7 +138,7 @@ namespace RestaurentBookingWebsite.Controllers
         [HttpGet]
         public async Task<IActionResult> MyBookings(int id)
         {
-            //var bookingDetails = _bookingsServices.GetCustomerBookingDetails(id);
+            ViewBag.CustomerId = HttpContext.Session.GetInt32("CustomerId");
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:5093/api/");
@@ -165,8 +151,6 @@ namespace RestaurentBookingWebsite.Controllers
                     var bookingDetails = Response.Result;
                     if (bookingDetails != null)
                     {
-                        TempData["CustId"] = id;
-                        TempData["CustomerId"] = id;
                         return View(bookingDetails);
                     }                    
                 }
@@ -176,10 +160,12 @@ namespace RestaurentBookingWebsite.Controllers
             
         }
 
-        public async Task<IActionResult> CancelBooking( int id) 
+        public async Task<IActionResult> CancelBooking(int id) 
         {
-           
-
+            ViewBag.CustomerId = HttpContext.Session.GetInt32("CustomerId");
+            List<Admin> adminDetailsLst = new List<Admin>();
+            Booking bookingDetails =  new Booking();
+            Customer customerDetails = new Customer();
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:5093/api/");
@@ -189,14 +175,75 @@ namespace RestaurentBookingWebsite.Controllers
                     var Response = Res.Content.ReadAsAsync<int>();
                     Response.Wait();
 
-                    if (Response.Result == 1)
+                    var res = Response.Result;
+                    if(res == 1)
                     {
-                        return RedirectToAction("MyBookings", "CustomerDashboard", new { @id = Convert.ToInt32(TempData["CustomerId"]) });
-                    }
+                        HttpResponseMessage Res2 = await client.GetAsync("CustomerAPI/GetBookingsById/" + id.ToString());
+                        HttpResponseMessage Res3 = await client.GetAsync("AdminAPI/GetAllAdminDetails/");
 
-                }
-                ModelState.AddModelError(string.Empty, "Could not cancel booking");
-                return RedirectToAction("MyBookings", "CustomerDashboard", new { @id = Convert.ToInt32(TempData["CustomerId"]) });
+                        if (Res2.IsSuccessStatusCode)
+                        {
+                            var Resp = Res2.Content.ReadAsAsync<Booking>();
+                            Resp.Wait();
+
+                            bookingDetails = Resp.Result;
+                            HttpResponseMessage Res4 = await client.GetAsync("CustomerAPI/GetCustomerById/" + bookingDetails.CustomerId.ToString());
+                            if (Res4.IsSuccessStatusCode)
+                            {
+                                var Respn = Res4.Content.ReadAsAsync<Customer>();
+                                Respn.Wait();
+                                customerDetails = Respn.Result;
+                            }
+                        }
+                        if (Res3.IsSuccessStatusCode)
+                        {
+                            var Resp = Res3.Content.ReadAsAsync<List<Admin>>();
+                            Resp.Wait();
+
+                            adminDetailsLst = Resp.Result;
+                        }
+
+                        if (customerDetails != null && bookingDetails != null)
+                        {
+                            MailRequest mail = new MailRequest();
+
+                            mail.Body = "Dear " + customerDetails.FirstName + " " + customerDetails.LastName + " .<br>" +
+                                        "Your booking has been Cancelled successfully.<br>" +
+                                         "Booking Id :" + bookingDetails.BookingId +
+                                        "<br>Slot Date and time :" + bookingDetails.BookingDate +
+                                        "<br>Thank You." +
+                                        "<br>Best regards," +
+                                        "<br>Sharan";
+                            mail.Subject = "Cancellation has been confirmed"; 
+                            mail.ToEmail = customerDetails.Email;
+
+                            var resp = client.PostAsJsonAsync("LoginAPI/SendEmail/", mail);
+                            resp.Wait();
+
+                            var respResult = resp.Result;
+
+                        }
+                        if (adminDetailsLst != null)
+                        {
+                            foreach (var admin in adminDetailsLst)
+                            {
+                                MailRequest mail = new MailRequest();
+                                mail.Body = "Dear Admin " + admin.FirstName + " " + admin.LastName +
+                                                                 ",<br>A new Cancelletion has been confirmed by the Customer: " + customerDetails.FirstName + " " + customerDetails.LastName +
+                                                                 " with the booking Id: " + bookingDetails.BookingId +
+                                                                 "<br>Slot Date and time :" + bookingDetails.BookingDate +
+                                                                 "<br>Thank You.";
+
+                                mail.Subject = "Cancellation has been confirmed";                               
+                                mail.ToEmail = admin.Email;
+                                var resp = client.PostAsJsonAsync("LoginAPI/SendEmail/", mail);
+                                resp.Wait();
+                                var respResult = resp.Result;
+                            }
+                        }
+                    }                
+                }               
+                return RedirectToAction("MyBookings", "CustomerDashboard", new { @id = HttpContext.Session.GetInt32("CustomerId") });
             }
         }
 

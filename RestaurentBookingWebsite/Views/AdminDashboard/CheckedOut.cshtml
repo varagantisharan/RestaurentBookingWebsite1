@@ -4,12 +4,16 @@
 }
 
 <style>
-
+   
     body {
-        background: #fafafa url(https://jackrugile.com/images/misc/noise-diagonal.png);
+        background: #fafafa url('https://s.tmimgcdn.com/scr/1200x627/95900/food-logo-template_95902-original.jpg') no-repeat center center fixed;
+        background-size: cover;
         color: #444;
         font: 100%/30px 'Helvetica Neue', helvetica, arial, sans-serif;
         text-shadow: 0 1px 0 #fff;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
     }
 
     h1 {
@@ -60,15 +64,13 @@
         }
 
     a {
-        color: #007bff
-
+        color: #007bff;
         text-decoration: none;
     }
 
         a:hover {
             text-decoration: underline;
         }
-
 </style>
 
 
@@ -84,12 +86,9 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.GrossAmount, htmlAttributes: new { @class = "control-label" })
                 <div class="col-md-10">
-                        @* @Html.EditorFor(model => model.GrossAmount, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.GrossAmount, "Please enter valid amount", new { @class = "text-danger" }) *@
-                    <div class="col-md-10">
-                        <input asp-for="GrossAmount" class="form-control" required type="number" min="100" step="0.01" placeholder="Enter amount" />
-                        <span asp-validation-for="GrossAmount" class="text-danger"></span>
-                    </div>
+                    <input asp-for="GrossAmount" class="form-control" required type="number" min="100" step="0.01" placeholder="Enter amount" />
+                    <span asp-validation-for="GrossAmount" class="text-danger"></span>
+                        @Html.ValidationMessageFor(model => model.GrossAmount, "Please enter amount", new { @class = "text-danger" }) 
                 </div>
             </div>
             

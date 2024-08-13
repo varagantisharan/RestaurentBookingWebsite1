@@ -16,6 +16,24 @@ namespace RestaurentBookingWebsite.Services
             this.db = db;
             this.mailService = mailService;
         }
+
+        public List<Admin> GetAllAdminDetails()
+        {
+
+            List<Admin> GetAdmins = new List<Admin>();
+
+            GetAdmins = db.Admins.ToList();
+
+            if (GetAdmins != null)
+            {
+                return GetAdmins;
+            }
+            else
+            {
+                throw new Exception("No records found in Admin Database");
+            }
+        }
+
         public List<Customer> CustRegisteredInSevenDays()
         {
             DateTime minsSevenDays = DateTime.Now.AddDays(-7);
@@ -50,7 +68,7 @@ namespace RestaurentBookingWebsite.Services
 
         public List<Booking> BookingsAsPerDateRange(DateTime from, DateTime to)
         {
-            var bookings = db.Bookings.Where(b => b.BookingDate >= from && b.BookingDate <= to).ToList();
+            var bookings = db.Bookings.Where(b => b.BookingDate.Date >= from && b.BookingDate.Date <= to).ToList();
             if (bookings != null)
             {
                 return bookings;
@@ -77,7 +95,7 @@ namespace RestaurentBookingWebsite.Services
             }
         }
 
-        public List<Customer> GetBookedCustomerDetails(List<Booking> bookingmodel)
+        public List<Customer> GetBookedCustomerDetails()
         {
             return db.Customers.ToList();
         }
@@ -144,39 +162,10 @@ namespace RestaurentBookingWebsite.Services
                     if(DateTime.Now >= checkOutExists.CheckinTime && DateTime.Now.Date==checkOutExists.CheckinTime.Value.Date)
                     {
                         checkOutExists.CheckOutTime = DateTime.Now;
-                        //checkOutExists.GrossAmount = model.GrossAmount;
                         checkOutExists.GrossAmount = amt;
                         db.Entry(checkOutExists).State = EntityState.Modified;
-                        db.SaveChanges();
-
-
-                        var customerdetails = db.Customers.Find(db.Bookings.Find(checkOutExists.BookingId).CustomerId);
-                       
-                        if(customerdetails != null)
-                        {
-                            MailRequest mail = new MailRequest();
-
-                            string message = "Dear " + customerdetails.FirstName + " " + customerdetails.LastName + " .<br>" +
-                            "Thank you for visting our Restaurant,Your booking id has been closed.<br>" +
-                             "Booking Id :" + bookingdetails.BookingId +
-                            "<br>Slot Date and time :" + checkOutExists.CheckOutTime +
-                            "<br>Amount:" + checkOutExists.GrossAmount +
-                            "<br> Vist Again" +
-                            "<br>Thank You." +
-                            "<br>Best regards," +
-                            "<br>Sharan";
-                            string subject = "Check out has been confirmed";
-
-                            mail.Body = message;
-                            mail.Subject = subject;
-                            mail.ToEmail = customerdetails.Email;
-
-                            mailService.SendEmail(mail);
-                        }
-
-
-
-                        return 1;
+                        db.SaveChanges();                                           
+                        return id;
                     }
                     else
                     {

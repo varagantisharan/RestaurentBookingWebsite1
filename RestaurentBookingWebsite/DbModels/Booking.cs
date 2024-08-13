@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace RestaurentBookingWebsite.DbModels;
 
@@ -17,7 +18,9 @@ public partial class Booking
 
     public DateTime? CreationTime { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<CheckIn> CheckIns { get; set; } = new List<CheckIn>();
 
+    [JsonIgnore]
     public virtual Customer Customer { get; set; } = null!;
 }

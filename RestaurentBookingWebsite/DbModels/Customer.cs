@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace RestaurentBookingWebsite.DbModels;
 
 public partial class Customer
 {
     public int CustomerId { get; set; }
+    public string UserId { get; set; } = null!;
 
     public string FirstName { get; set; } = null!;
 
@@ -19,9 +21,9 @@ public partial class Customer
 
     public string Email { get; set; } = null!;
 
-    public string UserId { get; set; } = null!;
-
+   
     public DateTime? DateOfRegistration { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 }

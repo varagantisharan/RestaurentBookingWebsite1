@@ -7,6 +7,8 @@ using RestaurentBookingWebsite.Services;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Entity_Layer;
+using Humanizer;
+using RestaurentBookingWebsite.Models;
 
 namespace RestaurentBookingWebsite.Controllers
 {
@@ -14,11 +16,9 @@ namespace RestaurentBookingWebsite.Controllers
     [ApiController]
     public class AdminAPIController : ControllerBase
     {
-        private ILogin _loginService;
         private IAdmin _adminService;
-        public AdminAPIController(ILogin loginService, IAdmin adminService)
+        public AdminAPIController(IAdmin adminService)
         {
-            _loginService = loginService;
             _adminService = adminService;
         }
 
@@ -108,5 +108,79 @@ namespace RestaurentBookingWebsite.Controllers
 
             return Ok(res);
         }
+
+        [HttpGet]
+        [Route("GetAllAdminDetails")]
+        public async Task<ActionResult<Admin>> GetAllAdminDetails()
+        {
+            var res = _adminService.GetAllAdminDetails();
+
+            if (res == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Route("DateRangeBookings")]
+        public async Task<IActionResult> DateRangeBookings([FromBody] Dictionary<string, string> data)
+        {
+            var From = Convert.ToDateTime(data["FromDate"] +"/"+ data["FromMonth"] +"/"+ data["FromYear"]);
+            var To = Convert.ToDateTime(data["ToDate"] + "/" + data["ToMonth"] + "/" + data["ToYear"]);
+            var bookings = _adminService.BookingsAsPerDateRange(From, To);
+            if(bookings == null)
+            {
+                return BadRequest("No bookings found");
+            }
+            return Ok(bookings);    
+        }
+
+        [HttpGet]
+        [Route("GetCustomerBookingDetails")]
+        public async Task<IActionResult> GetCustomerBookingDetails()
+        {
+            List<Booking> bookings =  _adminService.UpcomingThreeDaysBookings();
+            List<Customer> customers = _adminService.GetBookedCustomerDetails();
+            List<CheckIn> checkins = _adminService.GetAllCheckIns();
+
+            var customerBookings = from c in customers
+                                   join b in bookings on c.CustomerId equals b.CustomerId into table1
+                                   from b in table1
+                                   join ch in checkins on b.BookingId equals ch.BookingId into table2
+                                   from ch in table2.DefaultIfEmpty().ToList()
+                                   select new CustomerBookingModel
+                                   {
+                                       Customer = c,
+                                       Booking = b,
+                                       CheckIn = ch,
+                                   };
+            return Ok(customerBookings);
+        }
+
+
+        [HttpPost]
+        [Route("GetCustomerBookingByUserId")]
+        public async Task<IActionResult> GetCustomerBookingByUserId([FromBody] String UserId)
+        {
+            List<Booking> bookings = _adminService.UpcomingThreeDaysBookings();
+            List<Customer> customers = _adminService.GetBookedCustomerDetails().Where(c => c.UserId == UserId).ToList();
+            List<CheckIn> checkins = _adminService.GetAllCheckIns();
+
+            var customerBookings = from c in customers
+                                   join b in bookings on c.CustomerId equals b.CustomerId into table1
+                                   from b in table1
+                                   join ch in checkins on b.BookingId equals ch.BookingId into table2
+                                   from ch in table2.DefaultIfEmpty().ToList()
+                                   select new CustomerBookingModel
+                                   {
+                                       Customer = c,
+                                       Booking = b,
+                                       CheckIn = ch,
+                                   };            
+            return Ok(customerBookings);
+        }
+
     }
 }
