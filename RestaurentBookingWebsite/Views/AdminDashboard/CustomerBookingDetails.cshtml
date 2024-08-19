@@ -233,9 +233,13 @@
                             <td> </td>
                             <td> </td>
                             <td> </td>
-                            <td> </td>
+                            <td> </td>                          
                             <td>
-                                <a asp-action="CheckedIn" asp-route-id="@item.Booking.BookingId">CheckIn</a> 
+                                @if ((DateTime.Now - item.Booking.BookingDate).TotalHours >= 0)
+                                {                                   
+                                    <a asp-action="CheckedIn" asp-route-id="@item.Booking.BookingId">CheckIn</a>
+                                }
+                                
                             </td>
                         }                     
                     </tr>

@@ -15,11 +15,6 @@ namespace Entity_Layer
 
         public int booking_id { get; set; }
 
-        //[DataType(DataType.Date)]
-
-        //[DataType(DataType.DateTime)]
-        //[Display(Name = "Date Edit")]
-        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{dd-MM-yyyy}")]
         [JsonIgnore]
         public DateTime booking_date { get; set; }
         public string slot_Time { get; set; }

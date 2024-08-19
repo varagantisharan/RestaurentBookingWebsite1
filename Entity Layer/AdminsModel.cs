@@ -35,7 +35,7 @@ namespace Entity_Layer
 
 
         [Required(ErrorMessage = "Phone number is required.")]
-        [Phone(ErrorMessage = "Invalid phone number format.")]
+        //[Phone(ErrorMessage = "Invalid phone number format.")]
         public string phone_number { get; set; }
 
         [Required(ErrorMessage = "UserId is required.")]

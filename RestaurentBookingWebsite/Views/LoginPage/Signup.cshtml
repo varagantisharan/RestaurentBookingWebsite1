@@ -51,7 +51,7 @@
     border: 1px solid #ddd;
     width: 100%; 
     box-sizing: border-box;
-}
+    }
 
   
     label {
@@ -129,21 +129,14 @@
     background-color: rgba(255, 255, 255, 0.5); 
     border: 1px solid #ced4da; 
     transition: background-color 0.3s ease; 
-}
+    }
 
-.custom-input:focus {
-    background-color: rgba(255, 255, 255, 0.8); 
-    border-color: #80bdff; 
-    outline: none; 
-}
+    .custom-input:focus {
+        background-color: rgba(255, 255, 255, 0.8); 
+        border-color: #80bdff; 
+        outline: none; 
+    }
 
-
-
-
-
-
-
-   
 </style>
 
 <h3 >SIGNUP</h3>
@@ -153,11 +146,14 @@
     <div class="col-md-4">
         <form asp-action="Signup" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+            @if (ViewBag.Message1 != null)
+            {
+                <p class="text-danger">@ViewBag.Message1</p>
+            }
             <div class="form-group-container">
                 <div class="form-group">
                     <label asp-for="userid" class="control-label">UserId</label>
-                    <input asp-for="userid" class="form-control custom-input" required  />
+                    <input asp-for="userid" class="form-control custom-input" required pattern="^\S+$" />
                     <span asp-validation-for="userid" class="text-danger"></span>
                 </div>
                 @if(ViewBag.Message != null)
@@ -199,6 +195,10 @@
                     <span asp-validation-for="confirm_password" class="text-danger"></span>
                 </div>
             </div>
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <p class="text-danger">@ViewBag.ErrorMessage</p>
+            }
 
             <div class="form-group-container">
                 <div class="form-group">
@@ -219,7 +219,7 @@
             <div class="form-group-container">
                 <div class="form-group">
                     <label asp-for="phone_number" class="control-label">Phone Number</label>
-                    <input asp-for="phone_number" type="tel" class="form-control custom-input" required pattern="[0-9]{10}      />
+                    <input asp-for="phone_number" type="tel" class="form-control custom-input" required/> @* pattern="[0-9]{11}" *@
                     <span asp-validation-for="phone_number" class="text-danger"></span>
                 </div>
             </div>
@@ -239,7 +239,9 @@
                 <div class="form-group">
                     <input type="submit" value="Submit" class="btn btn-primary" />
                 </div>
+
             </div>
+
 
         </form>
     </div>

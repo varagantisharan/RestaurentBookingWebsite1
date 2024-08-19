@@ -7,7 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestaurentBookingWebsite", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entity Layer", "Entity Layer\Entity Layer.csproj", "{D630F8C1-1E7D-4119-AE75-29227A73DF59}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication", "WebApplication\WebApplication.csproj", "{C9A3F82F-41F1-4CC4-89A8-957752040940}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPIApplication", "WebAPIApplication\WebAPIApplication.csproj", "{5DB2FF59-58BC-4EA5-8086-021A533C2737}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ACEA94BE-9776-4942-A480-07D5A91A714B} = {ACEA94BE-9776-4942-A480-07D5A91A714B}
+		{D630F8C1-1E7D-4119-AE75-29227A73DF59} = {D630F8C1-1E7D-4119-AE75-29227A73DF59}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +27,10 @@ Global
 		{D630F8C1-1E7D-4119-AE75-29227A73DF59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D630F8C1-1E7D-4119-AE75-29227A73DF59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D630F8C1-1E7D-4119-AE75-29227A73DF59}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9A3F82F-41F1-4CC4-89A8-957752040940}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9A3F82F-41F1-4CC4-89A8-957752040940}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9A3F82F-41F1-4CC4-89A8-957752040940}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9A3F82F-41F1-4CC4-89A8-957752040940}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DB2FF59-58BC-4EA5-8086-021A533C2737}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DB2FF59-58BC-4EA5-8086-021A533C2737}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DB2FF59-58BC-4EA5-8086-021A533C2737}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DB2FF59-58BC-4EA5-8086-021A533C2737}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,11 +1,10 @@
-﻿using DocumentFormat.OpenXml.Office2010.Excel;
+﻿//using DocumentFormat.OpenXml.Office2010.Excel;
 using Entity_Layer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RestaurentBookingWebsite.DbModels;
 using RestaurentBookingWebsite.Services;
 
-namespace RestaurentBookingWebsite.Controllers
+namespace WebAPIApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -43,7 +42,7 @@ namespace RestaurentBookingWebsite.Controllers
             bookings.customer_id = int.Parse(data["customer_id"]);
             bookings.slot_Time = data["slot_time"];
             var res = _bookingsServices.Register(bookings);
-            if(res == 1)
+            if(res!=null)
             {
                 return Ok(res);
             }

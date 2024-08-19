@@ -44,8 +44,8 @@ namespace RestaurentBookingWebsite.Controllers
             if (checkIn.gross_amount == 0 || checkIn.checkin_id <= 0)
             {
                 return BadRequest("Invalid amount or checkin Id");
-            }           
-            int res = _adminService.UpdateCheckOutDetails(checkIn.checkin_id, (int)checkIn.gross_amount,checkIn.booking_id);
+            }
+            int res = _adminService.UpdateCheckOutDetails(checkIn.checkin_id, (int)checkIn.gross_amount, checkIn.booking_id);
             if (res != 0)
             {
                 return Ok(res);
@@ -127,21 +127,21 @@ namespace RestaurentBookingWebsite.Controllers
         [Route("DateRangeBookings")]
         public async Task<IActionResult> DateRangeBookings([FromBody] Dictionary<string, string> data)
         {
-            var From = Convert.ToDateTime(data["FromDate"] +"/"+ data["FromMonth"] +"/"+ data["FromYear"]);
+            var From = Convert.ToDateTime(data["FromDate"] + "/" + data["FromMonth"] + "/" + data["FromYear"]);
             var To = Convert.ToDateTime(data["ToDate"] + "/" + data["ToMonth"] + "/" + data["ToYear"]);
             var bookings = _adminService.BookingsAsPerDateRange(From, To);
-            if(bookings == null)
+            if (bookings == null)
             {
                 return BadRequest("No bookings found");
             }
-            return Ok(bookings);    
+            return Ok(bookings);
         }
 
         [HttpGet]
         [Route("GetCustomerBookingDetails")]
         public async Task<IActionResult> GetCustomerBookingDetails()
         {
-            List<Booking> bookings =  _adminService.UpcomingThreeDaysBookings();
+            List<Booking> bookings = _adminService.UpcomingThreeDaysBookings();
             List<Customer> customers = _adminService.GetBookedCustomerDetails();
             List<CheckIn> checkins = _adminService.GetAllCheckIns();
 
@@ -178,7 +178,7 @@ namespace RestaurentBookingWebsite.Controllers
                                        Customer = c,
                                        Booking = b,
                                        CheckIn = ch,
-                                   };            
+                                   };
             return Ok(customerBookings);
         }
 

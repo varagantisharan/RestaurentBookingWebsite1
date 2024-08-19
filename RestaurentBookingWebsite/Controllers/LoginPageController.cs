@@ -9,7 +9,7 @@ namespace RestaurentBookingWebsite.Controllers
 {
     public class LoginPageController : Controller
     {
-        string Baseurl = "http://localhost:5093/api/";
+        string Baseurl = "http://localhost:5048/api/";
         public IActionResult SigninUser()
         {
             return View();
@@ -109,29 +109,22 @@ namespace RestaurentBookingWebsite.Controllers
                                     var respResult = resp.Result;
                                     if (respResult.IsSuccessStatusCode)
                                     {
-                                        ViewBag.Message = "SignUp Successfully Submited";
-                                        return RedirectToAction("SigninUser");
-                                    }
-                                    else
-                                    {
-                                        throw new Exception("Email is not sent");
-                                    }
+                                        ViewBag.Message1 = "SignUp Successfully Submited";
+                                        return View(newuser);
+                                        //return RedirectToAction("SigninUser");
+                                    }                                    
                                 }                                                                                            
-                            }
-                            else
-                            {
-                                throw new Exception("Signup is not successful");
-                            }
+                            }                          
                         }                       
                     }
                     return ViewBag.Message;
                 }
                 else
                 {
-                    throw new Exception("Password and Confirm Password must be same");
+                    ViewBag.ErrorMessage = "Password and Confirm Password must be same.";
+                    return View(newuser);
                 }
             }
-
             catch (Exception e)
             {               
                 throw new Exception("Signup is not successful");

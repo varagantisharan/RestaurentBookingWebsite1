@@ -8,7 +8,7 @@ namespace RestaurentBookingWebsite.Services
     {
         public List<Admin> GetAllAdminDetails();
         public List<Customer> CustRegisteredInSevenDays();
-        public List<Booking> UpcomingThreeDaysBookings();
+        public List<Booking> UpcomingThreeDaysBookings();   
         public List<Booking> CancellationForNextThreedays();
         public List<Booking> BookingsAsPerDateRange(DateTime from, DateTime to);
         public List<Customer> GetBookedCustomerDetails();

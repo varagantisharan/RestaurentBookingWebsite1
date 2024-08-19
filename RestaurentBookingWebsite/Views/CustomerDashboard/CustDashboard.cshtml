@@ -53,9 +53,9 @@
         font-size: 14px;
     }
 
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
 
     
     a {
@@ -64,9 +64,9 @@
         font-weight: bold;
     }
 
-        a:hover {
-            text-decoration: underline;
-        }
+    a:hover {
+        text-decoration: underline;
+    }
 
     
     table {
@@ -94,22 +94,22 @@
         background: #fafafa; 
     }
 
-        tr:nth-child(odd) td {
-            background: #f1f1f1; 
-        }
+    tr:nth-child(odd) td {
+        background: #f1f1f1; 
+    }
 
         
-        tr:last-of-type td {
-            box-shadow: inset 0 -1px 0 #fff;
-        }
+    tr:last-of-type td {
+        box-shadow: inset 0 -1px 0 #fff;
+    }
 
-            tr:last-of-type td:first-child {
-                box-shadow: inset 1px -1px 0 #fff;
-            }
+    tr:last-of-type td:first-child {
+        box-shadow: inset 1px -1px 0 #fff;
+    }
 
-            tr:last-of-type td:last-child {
-                box-shadow: inset -1px -1px 0 #fff;
-            }
+    tr:last-of-type td:last-child {
+        box-shadow: inset -1px -1px 0 #fff;
+    }
 
    
     tbody:hover td {
@@ -145,55 +145,43 @@
         /*  background-color: #f8f9fa; */
         border-bottom-left-radius: 5px;
     }
-
-
-
 </style>
 
 <div class="center-container">
     <div class="content">
- <div class="top-right">
-      <h4> @TempData["UserName"]</h4>
-</div>
- 
+        <div class="top-right">
+              <h4> @TempData["UserName"]</h4>
+        </div>
 
-<h3>BOOKING</h3>
-<div class="row">
-    <div class="col-md-4">
-                <form asp-action="Register" asp-route-id=@ViewBag.CustomerId> @* @TempData["CustId"] *@
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @*<div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
-                <input asp-for="CustomerId" class="form-control" />
-                 <select asp-for="CustomerId" class ="form-control" asp-items="ViewBag.CustomerId"></select>
-
-                </div>*@
-            <div class="form-group">
-                <label asp-for="booking_date" class="control-label">Booking Date</label>
+        <h3>BOOKING</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Register" asp-route-id=@ViewBag.CustomerId> 
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="booking_date" class="control-label">Booking Date</label>
                         <input asp-for="booking_date" type="date" class="form-control" min=@TempData["minDate"] max=@TempData["maxDate"] value="@defaultDate" />
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="slot_Time" class="control-label">Slot Time</label>
-                <select asp-for="slot_Time" class="form-control">
-                    <option value="09:00:00">9:00 AM To 12:00 PM </option>
-                    <option value="13:00:00">1:00 PM To 4:00 PM </option>
-                    <option value="17:00:00">5:00 PM To 8:00 PM </option>
-                    <option value="21:00:00">9:00 PM To 12:00 AM </option>
-                </select>
-
-                <span asp-validation-for="slot_Time" class="text-danger"></span>
-            </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="slot_Time" class="control-label">Slot Time</label>
+                        <select asp-for="slot_Time" class="form-control">
+                            <option value="09:00:00">9:00 AM To 12:00 PM </option>
+                            <option value="13:00:00">1:00 PM To 4:00 PM </option>
+                            <option value="17:00:00">5:00 PM To 8:00 PM </option>
+                            <option value="21:00:00">9:00 PM To 12:00 AM </option>
+                        </select> 
+                                                            
+                        <span asp-validation-for="slot_Time" class="text-danger"></span>
+                    </div>
            
-            <div class="form-group">
-                @* @Html.ActionLink("Book", "Register", new { id = Model.customer_id }) *@
-                <input type="submit" value="Book" class="btn btn-primary" />
+                    <div class="form-group">
+                        <input type="submit" value="Book" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+        <div class="form-group">
+            @Html.ActionLink("View My Bookings", "MyBookings", new { id = @ViewBag.CustomerId })
+        </div>    
     </div>
-</div>
-<div class="form-group">
-    @Html.ActionLink("View My Bookings", "MyBookings", new { id = @ViewBag.CustomerId })
-</div>    
-</div>
 </div>

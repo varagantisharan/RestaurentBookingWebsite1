@@ -88,7 +88,7 @@
                 <div class="col-md-10">
                     <input asp-for="GrossAmount" class="form-control" required type="number" min="100" step="0.01" placeholder="Enter amount" />
                     <span asp-validation-for="GrossAmount" class="text-danger"></span>
-                        @Html.ValidationMessageFor(model => model.GrossAmount, "Please enter amount", new { @class = "text-danger" }) 
+                        @* @Html.ValidationMessageFor(model => model.GrossAmount, "Please enter amount", new { @class = "text-danger" })  *@
                 </div>
             </div>
             

@@ -45,7 +45,7 @@ namespace RestaurentBookingWebsite.Controllers
             Customer customerDetails = new Customer();
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
 
                 var Res = client.PostAsJsonAsync("CustomerAPI/NewBooking/", data);
                 Res.Wait();
@@ -53,12 +53,12 @@ namespace RestaurentBookingWebsite.Controllers
                 var Result = Res.Result;
                 if (Result.IsSuccessStatusCode)
                 {
-                    var res = Result.Content.ReadAsAsync<int>().Result;
-                    if (res == 1 )
+                    var res = Result.Content.ReadAsAsync<Booking>().Result;
+                    if (res!=null)
                     {
-                        HttpResponseMessage Res2 = await client.GetAsync("CustomerAPI/GetBookingsById/" + id.ToString());
+                        HttpResponseMessage Res2 = await client.GetAsync("CustomerAPI/GetBookingsById/" + res.BookingId.ToString());
                         HttpResponseMessage Res3 = await client.GetAsync("AdminAPI/GetAllAdminDetails/");
-                        HttpResponseMessage Res4 = await client.GetAsync("CustomerAPI/GetCustomerById/" + model.customer_id);
+                        HttpResponseMessage Res4 = await client.GetAsync("CustomerAPI/GetCustomerById/" + model.customer_id.ToString());
 
                         if (Res2.IsSuccessStatusCode)
                         {
@@ -141,7 +141,7 @@ namespace RestaurentBookingWebsite.Controllers
             ViewBag.CustomerId = HttpContext.Session.GetInt32("CustomerId");
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
                 HttpResponseMessage Res = await client.GetAsync("CustomerAPI/GetBookings/" + id.ToString());
                 if (Res.IsSuccessStatusCode)
                 {
@@ -168,7 +168,7 @@ namespace RestaurentBookingWebsite.Controllers
             Customer customerDetails = new Customer();
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
                 HttpResponseMessage Res = await client.DeleteAsync("CustomerAPI/CancelBooking/" + id.ToString());
                 if (Res.IsSuccessStatusCode)
                 {

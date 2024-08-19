@@ -2,9 +2,8 @@
 using MailKit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Ocsp;
 using RestaurentBookingWebsite.DbModels;
-using System.Text;
+
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RestaurentBookingWebsite.Services
@@ -18,7 +17,7 @@ namespace RestaurentBookingWebsite.Services
             this.db = db;
             this.mailService = mailService; 
         }
-        public int Register(BookingsModel model)
+        public Booking Register(BookingsModel model)
         { 
             Booking MyBooking = new Booking();           
             MyBooking.CustomerId= model.customer_id;
@@ -50,7 +49,8 @@ namespace RestaurentBookingWebsite.Services
                 db.Bookings.Add(MyBooking);
                 db.SaveChanges();              
 
-                return 1;
+                return db.Bookings.Where(b=> b.CustomerId==model.customer_id && b.BookingDate==MyBooking.BookingDate && b.SlotTime==MyBooking.SlotTime).OrderByDescending(b=>b.CreationTime).FirstOrDefault();
+                //return 1;
                
             }
             catch (Exception e)
@@ -76,25 +76,10 @@ namespace RestaurentBookingWebsite.Services
                 throw new Exception("Customer not Found");
             }
         }
-        //public List<Admin> GetAllAdminDetails()
-        //{
-
-        //    List<Admin> GetAdmins = new List<Admin>();
-            
-        //    GetAdmins = db.Admins.ToList();
-
-        //    if(GetAdmins!=null)
-        //    {
-        //        return GetAdmins;
-        //    }
-        //    else
-        //    {
-        //        throw new Exception("No records found in Admin Database");
-        //    }
-        //}
-        public Booking GetBookingDetails(int custId)
+       
+        public Booking GetBookingDetails(int id)
         {
-            var bookingDetails = db.Bookings.OrderByDescending(p => p.BookingId).FirstOrDefault();
+            var bookingDetails = db.Bookings.Find(id);
             if(bookingDetails!=null)
             {
                 return bookingDetails;

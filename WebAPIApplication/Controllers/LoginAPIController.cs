@@ -22,7 +22,7 @@ namespace RestaurentBookingWebsite.Controllers
         public async Task<IActionResult> SignIn([FromBody] SignInModel model)
         {
             var user = _loginser.SignIn(model);
-            if(user==null)
+            if (user == null)
             {
                 return BadRequest("Invalid Credentials");
             }
@@ -60,7 +60,7 @@ namespace RestaurentBookingWebsite.Controllers
             {
                 return Ok(user);
             }
-            return BadRequest("Signup is not successful");           
+            return BadRequest("Signup is not successful");
         }
 
         [HttpPost]
@@ -74,8 +74,8 @@ namespace RestaurentBookingWebsite.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException.Message+" "+ex.Message);
-            }            
+                return BadRequest(ex.InnerException.Message + " " + ex.Message);
+            }
         }
     }
 }

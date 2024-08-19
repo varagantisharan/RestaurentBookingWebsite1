@@ -5,7 +5,7 @@ namespace RestaurentBookingWebsite.Services
 {
     public interface IBooking
     {
-        public int Register(BookingsModel model);
+        public Booking Register(BookingsModel model);
         public Customer GetCustomerDetails(int id);
         //public List<Admin> GetAllAdminDetails();
         public Booking GetBookingDetails(int custId);

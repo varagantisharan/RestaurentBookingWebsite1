@@ -16,13 +16,12 @@ namespace RestaurentBookingWebsite.Controllers
         public async Task<IActionResult> AdmnDashboard()//int id)
         {
             ViewBag.Name = HttpContext.Session.GetString("Username");
-            //string Name = _loginService.GetUserName(id, "Admin");
 
             TempData["UserName"] = ViewBag.Name;
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
                 HttpResponseMessage Res1 = await client.GetAsync("AdminAPI/UpcomingThreeDaysBookings/");
                 HttpResponseMessage Res2 = await client.GetAsync("AdminAPI/CustRegisteredInSevenDays/");
                 HttpResponseMessage Res3 = await client.GetAsync("AdminAPI/CancellationForNextThreedays/");
@@ -62,7 +61,7 @@ namespace RestaurentBookingWebsite.Controllers
             data["ToYear"] = To.Year.ToString();
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
                 HttpResponseMessage Res1 = await client.GetAsync("AdminAPI/UpcomingThreeDaysBookings/");
                 HttpResponseMessage Res2 = await client.GetAsync("AdminAPI/CustRegisteredInSevenDays/");
                 HttpResponseMessage Res3 = await client.GetAsync("AdminAPI/CancellationForNextThreedays/");
@@ -90,7 +89,12 @@ namespace RestaurentBookingWebsite.Controllers
                 {
                     var Response = Res4.Content.ReadAsAsync<List<Booking>>();
                     Response.Wait();
-                    ViewBag.DateRangeBookings = Response.Result;
+                    var Res= Response.Result;
+                    if (Res.Count >0)
+                    {
+                        ViewBag.ViewExcel = 1;
+                    }
+                    ViewBag.DateRangeBookings = Res;                   
                 }
 
             }            
@@ -112,7 +116,7 @@ namespace RestaurentBookingWebsite.Controllers
             data["ToYear"] = To.Year.ToString();
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
                 var Res = client.PostAsJsonAsync("AdminAPI/DateRangeBookings/", data);
                 Res.Wait();
 
@@ -120,6 +124,7 @@ namespace RestaurentBookingWebsite.Controllers
                 if (Result.IsSuccessStatusCode)
                 {
                     var Response = Result.Content.ReadAsAsync<List<Booking>>();
+                    
                     Response.Wait();
                     var bookings = Response.Result;
                     if (bookings.Count >= 1)
@@ -141,7 +146,7 @@ namespace RestaurentBookingWebsite.Controllers
             using (var client = new HttpClient())
             {
                 List<CustomerBookingModel> customerBookings = new List<CustomerBookingModel>();
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
                 HttpResponseMessage Res1 = await client.GetAsync("AdminAPI/GetCustomerBookingDetails/");                
 
                 if (Res1.IsSuccessStatusCode)
@@ -158,7 +163,7 @@ namespace RestaurentBookingWebsite.Controllers
             using (var client = new HttpClient())
             {
                 List<CustomerBookingModel> customerBookings = new List<CustomerBookingModel>();
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
                 var Res = client.PostAsJsonAsync("AdminAPI/GetCustomerBookingByUserId/", UserId);
                 Res.Wait();
 
@@ -175,7 +180,7 @@ namespace RestaurentBookingWebsite.Controllers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
                 
                 var Res = client.PostAsJsonAsync("AdminAPI/CheckIn/", id);
                 Res.Wait();
@@ -197,7 +202,7 @@ namespace RestaurentBookingWebsite.Controllers
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
                 HttpResponseMessage Res = await client.GetAsync("AdminAPI/GetCheckIn/"+id.ToString());
                 if (Res.IsSuccessStatusCode)
                 {                  
@@ -215,7 +220,7 @@ namespace RestaurentBookingWebsite.Controllers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5093/api/");
+                client.BaseAddress = new Uri("http://localhost:5048/api/");
                 CheckInsModel model = new CheckInsModel();
                 model.checkin_id = checkIn.CheckinId;
                 model.gross_amount = (float)checkIn.GrossAmount;
